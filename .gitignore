@@ -19,6 +19,26 @@ yarn-error.log*
 # env files
 .env*
 
+# Python / FastAPI
+.venv/
+__pycache__/
+*.py[cod]
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.python-version
+
+# SQLite / local data
+/data/
+*.db
+*.sqlite
+*.sqlite3
+
+# ML artifacts
+/ml/artifacts/
+/backend/model/
+
 # vercel
 .vercel
 

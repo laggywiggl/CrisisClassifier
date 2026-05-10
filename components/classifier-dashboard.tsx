@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { getDashboardStats } from "@/lib/classifier"
+import { toast } from "@/hooks/use-toast"
+import { getStats } from "@/lib/api"
 import {
   BarChart,
   Bar,
@@ -22,6 +23,7 @@ type DashboardStats = {
   totalClassified: number
   emergencyCount: number
   nonEmergencyCount: number
+  avgLatencyMs?: number
   categoryDistribution: { name: string; value: number }[]
   weeklyTrends: { date: string; emergency: number; nonEmergency: number }[]
   confidenceDistribution: { range: string; count: number }[]
@@ -34,10 +36,14 @@ export default function ClassifierDashboard() {
   useEffect(() => {
     const loadStats = async () => {
       try {
-        const data = await getDashboardStats()
+        const data = await getStats(7)
         setStats(data)
       } catch (error) {
-        console.error("Failed to load dashboard stats:", error)
+        toast({
+          title: "Failed to load dashboard stats",
+          description: error instanceof Error ? error.message : "Unexpected error",
+          variant: "destructive",
+        })
       } finally {
         setIsLoading(false)
       }
@@ -61,7 +67,7 @@ export default function ClassifierDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Total Classified</CardTitle>
@@ -89,6 +95,15 @@ export default function ClassifierDashboard() {
             <p className="text-xs text-muted-foreground">
               {(100 - Number.parseFloat(emergencyPercentage)).toFixed(1)}% of total content
             </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Model latency (avg)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{Math.round(stats.avgLatencyMs ?? 0)} ms</div>
+            <p className="text-xs text-muted-foreground">Average inference time (server-side)</p>
           </CardContent>
         </Card>
       </div>
@@ -119,6 +134,13 @@ export default function ClassifierDashboard() {
                     <Bar dataKey="nonEmergency" name="Non-Emergency" fill="#22c55e" />
                   </BarChart>
                 </ResponsiveContainer>
+              </div>
+              <div className="sr-only" aria-label="Weekly trend data table">
+                {stats.weeklyTrends.map((p) => (
+                  <div key={p.date}>
+                    {p.date}: emergency {p.emergency}, non-emergency {p.nonEmergency}
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -153,6 +175,13 @@ export default function ClassifierDashboard() {
                   </PieChart>
                 </ResponsiveContainer>
               </div>
+              <div className="sr-only" aria-label="Category distribution data table">
+                {stats.categoryDistribution.map((c) => (
+                  <div key={c.name}>
+                    {c.name}: {c.value}
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -174,6 +203,13 @@ export default function ClassifierDashboard() {
                     <Bar dataKey="count" name="Classifications" fill="#8884d8" />
                   </BarChart>
                 </ResponsiveContainer>
+              </div>
+              <div className="sr-only" aria-label="Confidence distribution data table">
+                {stats.confidenceDistribution.map((b) => (
+                  <div key={b.range}>
+                    {b.range}: {b.count}
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>

@@ -2,25 +2,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import ClassifierInput from "@/components/classifier-input"
 import ClassifierHistory from "@/components/classifier-history"
 import ClassifierDashboard from "@/components/classifier-dashboard"
-import { AlertTriangle } from "lucide-react"
+import AppHeader from "@/components/app-header"
+import LiveFeed from "@/components/live-feed"
+import ModelCompare from "@/components/model-compare"
 
 export default function Home() {
   return (
     <main className="container mx-auto px-4 py-8">
-      <div className="flex items-center gap-3 mb-6">
-        <AlertTriangle className="h-8 w-8 text-red-500" />
-        <h1 className="text-3xl font-bold">CrisisClassifier</h1>
-      </div>
-
-      <p className="text-muted-foreground mb-8">
-        AI-powered news classification tool that analyzes content and determines whether it's related to emergencies.
-      </p>
+      <AppHeader />
 
       <Tabs defaultValue="classify" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-8">
+        <TabsList className="grid w-full grid-cols-5 mb-8">
           <TabsTrigger value="classify">Classify News</TabsTrigger>
           <TabsTrigger value="history">History</TabsTrigger>
           <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+          <TabsTrigger value="live">Live Feed</TabsTrigger>
+          <TabsTrigger value="compare">Compare</TabsTrigger>
         </TabsList>
 
         <TabsContent value="classify">
@@ -33,6 +30,14 @@ export default function Home() {
 
         <TabsContent value="dashboard">
           <ClassifierDashboard />
+        </TabsContent>
+
+        <TabsContent value="live">
+          <LiveFeed />
+        </TabsContent>
+
+        <TabsContent value="compare">
+          <ModelCompare />
         </TabsContent>
       </Tabs>
     </main>

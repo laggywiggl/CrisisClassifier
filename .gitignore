@@ -39,6 +39,9 @@ __pycache__/
 /ml/artifacts/
 /backend/model/
 
+# IDE
+.cursor/
+
 # vercel
 .vercel
 

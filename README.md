@@ -119,7 +119,3 @@ python ml/train.py --model_id distilbert-base-uncased --output_dir ml/artifacts/
 python ml/evaluate.py --model_dir ml/artifacts/distilbert-crisisbench
 python ml/export_model.py --model_dir ml/artifacts/distilbert-crisisbench --out_dir backend/model
 ```
-
-## License
-
-MIT
